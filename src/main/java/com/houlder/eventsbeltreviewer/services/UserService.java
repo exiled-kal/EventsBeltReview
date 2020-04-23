@@ -16,7 +16,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
     
-    // register user and hash their password
+    // REGISTER USER AND HASH THEIR PASSWORD
     public User registerUser(User user) {
         String hashed = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashed);

@@ -6,9 +6,10 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.houlder.eventsbeltreviewer.models.User;
@@ -25,30 +26,33 @@ public class Users {
         this.userValidator = userValidator;
     }
     
-    @RequestMapping("/registration")
-    public String registerForm(@ModelAttribute("user") User user) {
-        return "registrationPage.jsp";
-    }
-    @RequestMapping("/login")
-    public String login() {
-        return "loginPage.jsp";
+    // -------------------- ROUTES FOR REGISTER -------------------- //
+    
+    @GetMapping("/")
+    // THE ROOT FOLDER TAKES THE USER TO THE REGISTRATION PAGE
+    public String index(@ModelAttribute("user") User user) {
+    	return "index.jsp";
     }
     
-    @RequestMapping(value="/registration", method=RequestMethod.POST)
+    @PostMapping("/registration")
     public String registerUser(@Valid @ModelAttribute("user") User user, BindingResult result, HttpSession session) {
-        // if result has errors, return the registration page (don't worry about validations just now)
-        // else, save the user in the database, save the user id in session, and redirect them to the /home route
-        userValidator.validate(user, result);
-    	if (result.hasErrors()) {
-			return "registrationPage.jsp;";
+        // VALIDATE THAT SECOND PASSWORD MATCHES THE FIRST
+    	userValidator.validate(user, result);
+        // IF THERE ARE ERRORS, SHOW THE ERRORS AND RETURN USER TO REGISTRATION PAGE
+        if (result.hasErrors()) {
+			return "index.jsp;";
 		}
+    	// REGISTER THE USER
 		User u = userService.registerUser(user);
 		session.setAttribute("userId", u.getId());
+		// REDIRECT USER TO THE HOME PAGE
 		return "redirect:/home";
     }
+
+    // -------------------- ROUTES FOR LOGIN -------------------- //   
     
-    @RequestMapping(value="/login", method=RequestMethod.POST)
-    public String loginUser(@RequestParam("email") String email, @RequestParam("password") String password, Model model, HttpSession session) {
+    @PostMapping("/login")
+    public String loginUser(@ModelAttribute("user") User user, @RequestParam("email") String email, @RequestParam("password") String password, Model model, HttpSession session) {
         // if the user is authenticated, save their user id in session
         // else, add error messages and return the login page
     	boolean isAuthenticated = userService.authenticateUser(email, password);
@@ -56,9 +60,10 @@ public class Users {
     		User u = userService.findByEmail(email);
     		session.setAttribute("userId", u.getId());
     		return "redirect:/home";
-    	} else {
+    	} 
+		else {
     		model.addAttribute("error", "Invalid Credentials. Please try again.");
-    		return "loginPage.jsp";
+    		return "index.jsp";
     	}
     }
     

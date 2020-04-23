@@ -28,20 +28,24 @@ public class User {
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 50, message="Enter a valid First Name")
     private String firstName;
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 50, message="Enter a valid Last Name")
     private String lastName;
 	@Email(message="Email must be valid")
 	private String email;
-    @Size(max = 50)
+    @Size(min = 1, max = 50, message="Enter a valid City")
     private String city;
-    @Size(max = 50)
+    @Size(min = 1, max = 50, message="Enter a valid State")
     private String state;
     @Size(min=5, message="Password must be greater than 5 characters")
     private String password;
+    
     @Transient
     private String passwordConfirmation;
+    @Transient
+    private Boolean duplicate;
+    
     @Column(updatable=false)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createdAt;
@@ -62,7 +66,7 @@ public class User {
 	public User() {
 
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -125,6 +129,14 @@ public class User {
 
 	public void setPasswordConfirmation(String passwordConfirmation) {
 		this.passwordConfirmation = passwordConfirmation;
+	}
+
+	public Boolean getDuplicate() {
+		return duplicate;
+	}
+
+	public void setDuplicate(Boolean duplicate) {
+		this.duplicate = duplicate;
 	}
 
 	public Date getCreatedAt() {
