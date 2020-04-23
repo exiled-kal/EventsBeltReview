@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.houlder.eventsbeltreviewer.models.Event;
 import com.houlder.eventsbeltreviewer.models.User;
 import com.houlder.eventsbeltreviewer.services.UserService;
 import com.houlder.eventsbeltreviewer.validator.UserValidator;
@@ -67,13 +68,16 @@ public class Users {
     	}
     }
     
+    
+    // -------------------- ROUTES FOR DASHBOARD AND CREATE EVENT -------------------- //   
+    
     @RequestMapping("/home")
-    public String home(HttpSession session, Model model) {
+    public String home(HttpSession session, Event event, Model model) {
         // get user from session, save them in the model and return the home page
     	Long userId = (Long) session.getAttribute("userId");
     	User u = userService.findUserById(userId);
     	model.addAttribute("user", u);
-    	return "homePage.jsp";			
+    	return "dashboard.jsp";			
     }
     
     @RequestMapping("/logout")
