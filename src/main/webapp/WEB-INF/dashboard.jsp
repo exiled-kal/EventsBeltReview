@@ -43,14 +43,14 @@
 			            					<a href="/event/${lev.id}/edit">edit</a>
 		            					</c:when>
 		            					<c:otherwise>
-<%-- 											Create another choose statement that passes the user obect.  If the user object is found in the attendees list then let this person cancel
-											Otherwise allow them to join which creates the relationship
-											
-											
-											<c:choose>
-												c:when test="" test to see .cotains objectpass along a user object and if true (show cancel) otherwise show join --%>
-											<a href="/event/${lev.id}/join">join</a> | 
-			            					<a href="/event/${lev.id}/cancel">cancel</a>
+		            						<form:form action="/event/${lev.id}/attendee" method="post" modelAttribute="event">
+												<form:input path="user" value="${user.id}" type="hidden"/>
+											    <input type="submit" value="Join"/>
+										   	</form:form>
+		            						<form:form action="/event/${lev.id}/attendee" method="delete" modelAttribute="event">
+												<form:input path="user" value="${user.id}" type="hidden"/>
+											    <input type="submit" value="Cancel"/>
+										   	</form:form>
 		            					</c:otherwise>
 	            					</c:choose>
 		            			</td>
@@ -59,6 +59,7 @@
 				    </tbody>
 				</table>
 			</div>
+			<hr />
 			<div>
 				<p>
 				<h5>Here are some of the events in other states</h5>  
@@ -82,8 +83,14 @@
 					            <td><c:out value="${rev.state}"/></td>
  				            	<td><c:out value="${rev.user.firstName}"/></td>
 			            		<td>
-			            			<a href="/event/${lev.id}/join">join</a> | 
-			            			<a href="/event/${lev.id}/cancel">cancel</a>
+            						<form:form action="/event/${rev.id}/attendee" method="post" modelAttribute="event">
+										<form:input path="user" value="${user.id}" type="hidden"/>
+									    <input type="submit" value="Join"/>
+								   	</form:form>
+            						<form:form action="/event/${rev.id}/attendee" method="delete" modelAttribute="event">
+										<form:input path="user" value="${user.id}" type="hidden"/>
+									    <input type="submit" value="Cancel"/>
+								   	</form:form>
 		            			</td>
 					        </tr>
 				        </c:forEach>
@@ -92,6 +99,7 @@
 			</div>
 			<hr />
    		    <div>
+				<h3>Create An Event</h3>  
 				<form:form action="/event/new" method="POST" modelAttribute="event">
 					<p>
 						<form:errors path="event.*"></form:errors>

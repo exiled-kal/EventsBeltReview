@@ -11,17 +11,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.houlder.eventsbeltreviewer.models.Event;
+import com.houlder.eventsbeltreviewer.models.User;
 import com.houlder.eventsbeltreviewer.services.EventService;
+import com.houlder.eventsbeltreviewer.services.UserService;
 
 @Controller
 public class Events {
 	private final EventService eventService;
+	private final UserService userService;
 	
-	public Events(EventService eventService) {
+	public Events(EventService eventService, UserService userService) {
 		this.eventService = eventService;
+		this.userService = userService;
 	}
 	
     // -------------------- ROUTES FOR NEW EVENT -------------------- //
@@ -78,5 +82,27 @@ public class Events {
         eventService.deleteEvent(id);
         return "redirect:/home";
     }
+    
+    
+	// -------------------- ADD USER AS ATTENDEE TO EVENT -------------------- //
+    
+	@PostMapping("/event/{id}/attendee")
+	public String addAttendeeToEvent(@PathVariable("id")Long eventId, @RequestParam("user") Long attendeeId) {
+		Event event = eventService.findEvent(eventId);
+		User attendee = userService.findUser(attendeeId);
+		event.getAttendees().add(attendee);
+		eventService.createEvent(event);
+		return "redirect:/home";
+	}
 
+	// -------------------- REMOVE USER AS ATTENDEE TO EVENT -------------------- //
+	
+	@DeleteMapping("/event/{id}/attendee")
+	public String removeAttendeeFromEvent(@PathVariable("id")Long eventId, @RequestParam("user") Long attendeeId) {
+		Event event = eventService.findEvent(eventId);
+		User attendee = userService.findUser(attendeeId);
+		event.getAttendees().remove(attendee);
+		eventService.createEvent(event);
+		return "redirect:/home";
+	}
 }
