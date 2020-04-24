@@ -29,6 +29,7 @@ public class Event {
     private Long id;
     @Size(min = 1, max = 255)
     private String name;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date eventDate;
 	@Email(message="Email must be valid")
 	private String email;

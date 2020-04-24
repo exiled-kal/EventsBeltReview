@@ -1,5 +1,7 @@
 package com.houlder.eventsbeltreviewer.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.houlder.eventsbeltreviewer.models.Event;
 import com.houlder.eventsbeltreviewer.models.User;
+import com.houlder.eventsbeltreviewer.services.EventService;
 import com.houlder.eventsbeltreviewer.services.UserService;
 import com.houlder.eventsbeltreviewer.validator.UserValidator;
 
@@ -21,10 +24,12 @@ import com.houlder.eventsbeltreviewer.validator.UserValidator;
 public class Users {
     private final UserService userService;
     private final UserValidator userValidator;
+    private final EventService eventService;
     
-    public Users(UserService userService, UserValidator userValidator) {
+    public Users(UserService userService, UserValidator userValidator, EventService eventService) {
         this.userService = userService;
         this.userValidator = userValidator;
+        this.eventService = eventService;
     }
     
     // -------------------- ROUTES FOR REGISTER -------------------- //
@@ -76,13 +81,19 @@ public class Users {
         // get user from session, save them in the model and return the home page
     	Long userId = (Long) session.getAttribute("userId");
     	User u = userService.findUserById(userId);
+    	List<Event> localEvents = eventService.getAllEventsByState(u.getState());
+    	List<Event> remoteEvents = eventService.getAllEventsOutsideState(u.getState());
     	model.addAttribute("user", u);
+    	model.addAttribute("localEvents", localEvents);
+    	model.addAttribute("remoteEvents", remoteEvents);
     	return "dashboard.jsp";			
     }
     
     @RequestMapping("/logout")
     public String logout(HttpSession session) {
     	session.invalidate();
-    	return "redirect:/login";
+    	return "redirect:/";
     }
+
+    
 }
