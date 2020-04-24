@@ -25,6 +25,7 @@
 				            <th scope="col">Name</th>
 				         	<th scope="col">Date</th>
 				            <th scope="col">City</th>
+   				            <th scope="col">State</th>
 				            <th scope="col">Host</th>
 				            <th scope="col">Action</th>
 				        </tr>
@@ -32,9 +33,10 @@
 				    <tbody>
 				        <c:forEach items="${localEvents}" var="lev">
 					        <tr>
-					            <td><c:out value="${lev.name}"/></td>
+           			          	<td><a href="/event/${lev.id}">${lev.name}</a></td>
 					            <td><c:out value="${lev.eventDate}"/></td>
 					            <td><c:out value="${lev.city}"/></td>
+   					            <td><c:out value="${lev.state}"/></td>
  				            	<td><c:out value="${lev.user.firstName}"/></td>
 			            		<td>
 			            			<c:choose>
@@ -77,20 +79,28 @@
 				    <tbody>
 				        <c:forEach items="${remoteEvents}" var="rev">
 					        <tr>
-					            <td><c:out value="${rev.name}"/></td>
+           			          	<td><a href="/event/${rev.id}">${rev.name}</a></td>
 					            <td><c:out value="${rev.eventDate}"/></td>
 					            <td><c:out value="${rev.city}"/></td>
 					            <td><c:out value="${rev.state}"/></td>
  				            	<td><c:out value="${rev.user.firstName}"/></td>
-			            		<td>
-            						<form:form action="/event/${rev.id}/attendee" method="post" modelAttribute="event">
-										<form:input path="user" value="${user.id}" type="hidden"/>
-									    <input type="submit" value="Join"/>
-								   	</form:form>
-            						<form:form action="/event/${rev.id}/attendee" method="delete" modelAttribute="event">
-										<form:input path="user" value="${user.id}" type="hidden"/>
-									    <input type="submit" value="Cancel"/>
-								   	</form:form>
+								<td>
+			            			<c:choose>
+			            				<c:when test="${rev.user.id == user.id}">
+			            					<a href="/event/${rev.id}/destroy">delete</a> | 
+			            					<a href="/event/${rev.id}/edit">edit</a>
+		            					</c:when>
+		            					<c:otherwise>
+		            						<form:form action="/event/${rev.id}/attendee" method="post" modelAttribute="event">
+												<form:input path="user" value="${user.id}" type="hidden"/>
+											    <input type="submit" value="Join"/>
+										   	</form:form>
+		            						<form:form action="/event/${rev.id}/attendee" method="delete" modelAttribute="event">
+												<form:input path="user" value="${user.id}" type="hidden"/>
+											    <input type="submit" value="Cancel"/>
+										   	</form:form>
+		            					</c:otherwise>
+	            					</c:choose>
 		            			</td>
 					        </tr>
 				        </c:forEach>

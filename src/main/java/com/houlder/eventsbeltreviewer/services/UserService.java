@@ -1,5 +1,6 @@
 package com.houlder.eventsbeltreviewer.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -65,5 +66,9 @@ public class UserService {
 		else {
 			return null;
 		}
+	}
+	// RETRIEVE ALL USERS
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
 	}
 }
